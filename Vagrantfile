@@ -8,8 +8,16 @@ Vagrant.configure("2") do |config|
 
   # Every Vagrant virtual environment requires a box to build off of.
   config.vm.box = "precise64"
+  config.vm.box_url = "http://files.vagrantup.com/precise64.box"
   config.vm.network :forwarded_port, host: 4567, guest: 80
-
+  config.vm.provision :shell, :path => "bootstrap.sh"
+  config.vm.provision :chef_solo do |chef|
+    chef.cookbooks_path = "cookbooks"
+    chef.add_recipe "apt"
+    chef.add_recipe "apache2"
+    chef.add_recipe "networking_basic"
+    chef.add_recipe "aliases"
+  end
   # The url from where the 'config.vm.box' box will be fetched if it
   # doesn't already exist on the user's system.
   # config.vm.box_url = "http://domain.com/path/to/above.box"
